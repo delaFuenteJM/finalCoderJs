@@ -1,0 +1,22 @@
+[
+    {
+      "id": 1,
+      "materia": "Bandoneon",
+      "horario": "Lunes a Viernes 10hs"
+    },
+    {
+      "id": 2,
+      "materia": "Teoría Musical",
+      "horario": "Martes 14 a 15hs"
+    },
+    {
+      "id": 3,
+      "materia": "Armonía",
+      "horario": "Viernes 19 a 20hs"
+    },
+    {
+      "id": 4,
+      "materia": "Historia",
+      "horario": "Jueves 17 a 18hs"
+    }
+  ]

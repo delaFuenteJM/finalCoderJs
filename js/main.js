@@ -30,7 +30,7 @@ const clases=[
     {
         id: 1,
         materia: "Bandoneon",
-        horario: "L a V 10hs",
+        horario: "Lunes a Viernes 10hs",
     },
     {
         id: 2,
@@ -64,7 +64,7 @@ renderMaterias(clases)
 
 let clasesAnotadas = JSON.parse(localStorage.getItem("clasesAnotadas")) || [];
 
-
+//clicks y alerts
 function botonAgregarClases () {
     
     const addButton = document.querySelectorAll(".agregarMateria");

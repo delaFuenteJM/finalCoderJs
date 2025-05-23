@@ -1,18 +1,3 @@
-// let comprobanteMaterias = localStorage.getItem(clasesAnotadas)
-// comprobanteMaterias = JSON.parse(comprobanteMaterias)
-
-// let contenedorMaterias = document.getElementById("listaConstancia")
-
-// function renderComprobante(carItems) {
-//     carItems.forEach(clases => {
-//       const cart = document.createElement("div")
-//       cart.innerHTML = `<h2>${clases.materia}</h2>
-//                         <p>${clases.horario}</p>`
-//       contenedorMaterias.appendChild(cart)                    
-//     })
-// }
-// renderComprobante(comprobanteMaterias)
-
 // Obtener materias guardadas
 let comprobanteMaterias = localStorage.getItem("clasesAnotadas");
 comprobanteMaterias = JSON.parse(comprobanteMaterias);
@@ -24,7 +9,7 @@ datosEstudiante = JSON.parse(datosEstudiante);
 // Obtener contenedor
 let contenedorMaterias = document.getElementById("listaConstancia");
 
-// Función para renderizar el comprobante completo
+// Renderizado
 function renderComprobante(carItems) {
     // Mostrar datos del estudiante
     if (datosEstudiante) {
