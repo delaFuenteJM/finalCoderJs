@@ -18,5 +18,11 @@
       "id": 4,
       "materia": "Historia",
       "horario": "Jueves 17 a 18hs"
+    },
+    {
+      "id": 5,
+      "materia": "Contrapunto",
+      "horario": "Lunes 17 a 18hs"
     }
+    
   ]

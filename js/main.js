@@ -1,22 +1,56 @@
-//datos del estudiantes
+//datos alumnos
+
+let listaAlumnos = JSON.parse(localStorage.getItem('listaAlumnos')) || [];
+let alumnoActivoId = localStorage.getItem('alumnoActivoId'); 
+let alumnoActivo = null;
 
 const form = document.getElementById('formDatos');
 
 function guardarDatosEstudiante() {
-    const nombre = document.getElementById('nombre').value;
-    const email = document.getElementById('email').value;
-    const telefono = document.getElementById('telefono').value;
 
-    const datosEstudiante = { nombre, email, telefono };
-    localStorage.setItem('datosEstudiante', JSON.stringify(datosEstudiante));
+    const nombre = document.getElementById('nombre').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const telefono = document.getElementById('telefono').value.trim();
 
-    Swal.fire({
-        icon: 'success',
-        title: '¡Datos guardados!',
-        text: 'Tu información fue registrada correctamente.'
-    });
+    let alumnoExistente = listaAlumnos.find(alumno => alumno.email === email);
 
+    if (alumnoExistente) {
+        Swal.fire('Error', 'Ya existe un alumno registrado con este email.', 'error');
+
+        alumnoActivoId = alumnoExistente.id;
+        localStorage.setItem('alumnoActivoId', alumnoActivoId);
+        Swal.fire({
+            icon: 'info',
+            title: '¡Alumno ya registrado!',
+            text: 'Estás seleccionando este alumno para inscribir materias.'
+        });
+
+    } else {
+        const nuevoAlumno = {
+            id: Date.now(), 
+            nombre,
+            email,
+            telefono,
+            materiasInscritas: [] 
+        };
+        listaAlumnos.push(nuevoAlumno);
+        localStorage.setItem('listaAlumnos', JSON.stringify(listaAlumnos));
+
+        alumnoActivoId = nuevoAlumno.id;
+        localStorage.setItem('alumnoActivoId', alumnoActivoId);
+
+        Swal.fire({
+            icon: 'success',
+            title: '¡Alumno registrado!',
+            text: 'Puedes continuar inscribiendo materias.'
+        });
+
+        document.getElementById("seccionMaterias").style.display = "block";
+    }
+
+    alumnoActivo = listaAlumnos.find(alumno => alumno.id === parseInt(alumnoActivoId));
 }
+
 document.addEventListener('DOMContentLoaded', () => {
     const btnGuardar = document.getElementById('guardarDatos');
     if (btnGuardar) {
@@ -26,27 +60,37 @@ document.addEventListener('DOMContentLoaded', () => {
 
 //materias
 
-const clases=[
-    {
-        id: 1,
-        materia: "Bandoneon",
-        horario: "Lunes a Viernes 10hs",
-    },
-    {
-        id: 2,
-        materia: "Teoria Musical",
-        horario: "Martes 14 a 15hs",
-    },
-    {
-        id: 3,
-        materia: "Armonia",
-        horario: "viernes 19 a 20hs",
-    },    {
-        id: 4,
-        materia: "Historia",
-        horario: "Jueves 17 a 18hs",
-    },
-]
+let clases = []; 
+
+document.addEventListener('DOMContentLoaded', () => {
+
+    
+    alumnoActivoId = localStorage.getItem('alumnoActivoId');
+    listaAlumnos = JSON.parse(localStorage.getItem('listaAlumnos')) || [];
+    alumnoActivo = listaAlumnos.find(a => a.id === parseInt(alumnoActivoId));
+
+    if (alumnoActivo) {
+        document.getElementById("seccionMaterias").style.display = "block";
+
+        fetch('../json/materias.json')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('No se pudo cargar materias.json');
+                }
+                return response.json();
+            })
+            .then(data => {
+                clases = data;
+                renderMaterias(clases);
+            })
+            .catch(error => {
+                console.error('Error al cargar las materias:', error);
+                Swal.fire('Error', 'No se pudieron cargar las materias disponibles.', 'error');
+            });
+    }
+});
+
+
 
 let materiasDisponibles = document.getElementById("listaMateria")
 
@@ -60,9 +104,6 @@ function renderMaterias(materiasArray){
     })
     botonAgregarClases()
 }
-renderMaterias(clases)
-
-let clasesAnotadas = JSON.parse(localStorage.getItem("clasesAnotadas")) || [];
 
 //clicks y alerts
 function botonAgregarClases () {
@@ -70,28 +111,35 @@ function botonAgregarClases () {
     const addButton = document.querySelectorAll(".agregarMateria");
     addButton.forEach(button => {
         button.onclick = (e) => {
+            if (!alumnoActivo) {
+                Swal.fire("Error", "Primero completá tus datos personales.", "error");
+                return;
+            }
             const clasesId = e.currentTarget.id;
             const materiaSeleccionada = clases.find(clase => clase.id == clasesId);
-            const yaInscripto = clasesAnotadas.some(clase => clase.id === materiaSeleccionada.id);
+            const yaInscripto = alumnoActivo.materiasInscritas.some(clase => clase.id === materiaSeleccionada.id);
+
 
             if (!yaInscripto) {
-                clasesAnotadas.push(materiaSeleccionada);
-                localStorage.setItem("clasesAnotadas", JSON.stringify(clasesAnotadas));
+                alumnoActivo.materiasInscritas.push(materiaSeleccionada);
+                const index = listaAlumnos.findIndex(a => a.id === alumnoActivo.id);
+                listaAlumnos[index] = alumnoActivo;
+                localStorage.setItem("listaAlumnos", JSON.stringify(listaAlumnos));
+            
                 Swal.fire({
                     title: "¡Materia agregada!",
-                    icon: "success",
-                    draggable: true
-                  });
+                    icon: "success"
+                });
             } else {
                 Swal.fire({
                     icon: "error",
                     title: "Oops...",
                     text: "Ya estás inscripto en esta materia.",
-                  });
-                  
+                });
+                
             }
 
-            console.log(clasesAnotadas); 
+            console.log("Materias del alumno:", alumnoActivo.materiasInscritas);
         };
     });
 }

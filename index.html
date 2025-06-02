@@ -21,12 +21,14 @@
         <input type="text" id="nombre" placeholder="Nombre completo" required />
         <input type="email" id="email" placeholder="Email" required />
         <input type="tel" id="telefono" placeholder="Telefono" required />
-        <button type="button" id="guardarDatos">Guardar</button>
+        <button type="submit" id="guardarDatos">Guardar</button>
       </form>
 
-      <h2>Selecione su materia</h2>
-
-      <section id="listaMateria"></section>
+      <section id="seccionMaterias" style="display: none;">
+        <h2>Seleccioná tus materias</h2>
+        <div id="listaMateria"></div>
+      </section>
+      
 
       <h2><a href="./pages/comprobante.html">Comprobante de Inscripcion</a></h2>
     </main>
